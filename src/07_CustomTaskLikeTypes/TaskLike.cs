@@ -25,6 +25,8 @@ namespace _07_CustomTaskLikeTypes
             stateMachine.MoveNext();
         }
 
+        public TaskLike Task => default(TaskLike);
+
         // AwaitOnCompleted, AwaitUnsafeOnCompleted, SetException 
         // and SetStateMachine are empty
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(

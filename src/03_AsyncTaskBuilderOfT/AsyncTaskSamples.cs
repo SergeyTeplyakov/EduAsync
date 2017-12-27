@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace _01_AsyncTaskBuilder
+namespace _01_AsyncTaskOfTBuilder
 {
     [TestFixture]
     public class AsyncTaskSamples
@@ -12,10 +12,10 @@ namespace _01_AsyncTaskBuilder
         [Test]
         public void RunAsyncTask()
         {
-            AsyncTaskMethodBuilder.Inspector.Clear();
+            GlobalInspector.Inspector.Clear();
             AsyncTask();
             Thread.Sleep(42);
-            AsyncTaskMethodBuilder.Inspector.Print();
+            GlobalInspector.Inspector.Print();
 
             Assert.AreEqual(
                 new string[]
@@ -32,16 +32,16 @@ namespace _01_AsyncTaskBuilder
                     // The generated method access 'Task' property to await for
                     "Task",
                 },
-                AsyncTaskMethodBuilder.Inspector.InvokedMembers);
+                GlobalInspector.Inspector.InvokedMembers);
         }
 
         [Test]
         public void RunAsyncTaskWithAwait()
         {
-            AsyncTaskMethodBuilder.Inspector.Clear();
+            GlobalInspector.Inspector.Clear();
             AsyncTaskWithAwait();
             Thread.Sleep(42);
-            AsyncTaskMethodBuilder.Inspector.Print();
+            GlobalInspector.Inspector.Print();
 
             Assert.AreEqual(
                 new string[]
@@ -62,16 +62,16 @@ namespace _01_AsyncTaskBuilder
                     // The generated method access 'Task' property to await for
                     "Task",
                 },
-                AsyncTaskMethodBuilder.Inspector.InvokedMembers);
+                GlobalInspector.Inspector.InvokedMembers);
         }
 
         [Test]
         public void RunAsyncTaskThatFails()
         {
-            AsyncTaskMethodBuilder.Inspector.Clear();
+            GlobalInspector.Inspector.Clear();
             AsyncTaskThatThrows();
             Thread.Sleep(42);
-            AsyncTaskMethodBuilder.Inspector.Print();
+            GlobalInspector.Inspector.Print();
 
             Assert.AreEqual(
                 new string[]
@@ -87,16 +87,16 @@ namespace _01_AsyncTaskBuilder
                     // The generated method access 'Task' property to await for
                     "Task",
                 },
-                AsyncTaskMethodBuilder.Inspector.InvokedMembers);
+                GlobalInspector.Inspector.InvokedMembers);
         }
 
         [Test]
         public void RunAsyncTaskWithCancellation()
         {
-            AsyncTaskMethodBuilder.Inspector.Clear();
+            GlobalInspector.Inspector.Clear();
             AsyncTaskWithCancellation();
             Thread.Sleep(42);
-            AsyncTaskMethodBuilder.Inspector.Print();
+            GlobalInspector.Inspector.Print();
 
             Assert.AreEqual(
                 new string[]
@@ -112,37 +112,41 @@ namespace _01_AsyncTaskBuilder
                     // The generated method access 'Task' property to await for
                     "Task",
                 },
-                AsyncTaskMethodBuilder.Inspector.InvokedMembers);
+                GlobalInspector.Inspector.InvokedMembers);
 
-            Assert.IsInstanceOf<TaskCanceledException>(AsyncTaskMethodBuilder.LastInstance.Exception);
+            Assert.IsInstanceOf<TaskCanceledException>(AsyncTaskMethodBuilder<int>.LastInstance.Exception);
         }
 
-        public async Task AsyncTask()
+        public async Task<int> AsyncTask()
         {
-            AsyncTaskMethodBuilder.Inspector.Record("AsyncTask_Start");
+            GlobalInspector.Inspector.Record("AsyncTask_Start");
+            return 42;
         }
 
-        public async Task AsyncTaskWithAwait()
+        public async Task<int> AsyncTaskWithAwait()
         {
-            AsyncTaskMethodBuilder.Inspector.Record("AsyncTask_Start");
+            GlobalInspector.Inspector.Record("AsyncTask_Start");
             await Task.Yield();
-            AsyncTaskMethodBuilder.Inspector.Record("AsyncTask_AfterAwait");
+            GlobalInspector.Inspector.Record("AsyncTask_AfterAwait");
+            return 42;
         }
 
-        public async Task AsyncTaskThatThrows()
+        public async Task<int> AsyncTaskThatThrows()
         {
-            AsyncTaskMethodBuilder.Inspector.Record("AsyncTask_Start");
+            GlobalInspector.Inspector.Record("AsyncTask_Start");
             throw new InvalidOperationException();
         }
 
-        public async Task AsyncTaskWithCancellation()
+        public async Task<int> AsyncTaskWithCancellation()
         {
-            AsyncTaskMethodBuilder.Inspector.Record("AsyncTask_Start");
+            GlobalInspector.Inspector.Record("AsyncTask_Start");
 
             var cts = new CancellationTokenSource();
             cts.Cancel();
 
             await Task.Delay(42, cts.Token);
+
+            return 42;
         }
     }
 }

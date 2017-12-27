@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace _01_AsyncVoidBuilder
 {
     [TestFixture]
-    public class AsyncVoidSample
+    public class AsyncVoidSamples
     {
         [Test]
         public void RunAsyncVoid()
